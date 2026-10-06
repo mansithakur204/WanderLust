@@ -2,7 +2,6 @@ if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 
-console.log(process.env.SECRET);
 
 const express = require("express");
 const app = express();
@@ -21,6 +20,9 @@ const User = require("./models/user.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const wishlistRouter = require("./routes/wishlist.js");
+const bookingRouter = require("./routes/booking.js");
+
 
 
 
@@ -88,8 +90,12 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
+  res.locals.search = req.query.search || "";
+  res.locals.category = req.query.category || "";
+  res.locals.sort = req.query.sort || "";
   next();
 });
+
 
 // app.get("/demouser", async (req, res) => {
 //   let fakeUser = new User({
@@ -103,7 +109,10 @@ app.use((req, res, next) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
+app.use("/wishlist", wishlistRouter);
+app.use("/", bookingRouter);
 app.use("/", userRouter);
+
 
 app.all("/{*splat}", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));

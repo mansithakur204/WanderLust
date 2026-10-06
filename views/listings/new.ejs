@@ -1,7 +1,7 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-  <div class="col-8 offset-2">
-    <h3>Create a new listing</h3>
+<div class="row mt-4 mb-5">
+  <div class="col-12 col-md-8 col-lg-7 mx-auto">
+    <h3 class="fw-bold mb-4">Create a new listing</h3>
     <form
       method="POST"
       action="/listings"
@@ -10,54 +10,146 @@
       enctype="multipart/form-data"
     >
       <div class="mb-3">
-        <label for="title" class="form-lable">Title</label>
+        <label for="title" class="form-label">Title</label>
         <input
           name="listing[title]"
+          id="title"
           placeholder="Add a catchy title"
           type="text"
           class="form-control"
           required
         />
         <div class="valid-feedback">Title looks good!</div>
+        <div class="invalid-feedback">Please provide a title</div>
       </div>
 
       <div class="mb-3">
-        <label for="description" class="form-lable">Description</label>
+        <label for="description" class="form-label">Description</label>
         <textarea
           name="listing[description]"
+          id="description"
+          rows="4"
+          placeholder="Describe your place..."
           class="form-control"
           required
         ></textarea>
-        <div class="invalid-feedback">Please inter a short description</div>
+        <div class="invalid-feedback">Please enter a short description</div>
       </div>
 
-      
       <div class="mb-3">
-        <label for="image" class="form-lable">Upload Listing Image</label>
+        <label for="images" class="form-label">Upload Listing Images (Upload up to 6 photos)</label>
         <input
-          name="listing[image]"
+          name="listing[images]"
+          id="images"
           type="file"
           class="form-control"
+          multiple
           required
         />
+        <div class="invalid-feedback">Please select at least one image file</div>
       </div>
 
       <div class="row">
-        <div class="mb-3 col-md-4">
-          <label for="price" class="form-lable">Price</label>
+        <div class="mb-3 col-12 col-sm-6">
+          <label for="category" class="form-label">Category</label>
+          <select name="listing[category]" id="category" class="form-select" required>
+            <option value="Trending">Trending</option>
+            <option value="Rooms">Rooms</option>
+            <option value="Iconic Cities">Iconic Cities</option>
+            <option value="Mountains">Mountains</option>
+            <option value="Castles">Castles</option>
+            <option value="Amazing Pools">Amazing Pools</option>
+            <option value="Camping">Camping</option>
+            <option value="Farms">Farms</option>
+            <option value="Arctic">Arctic</option>
+            <option value="Domes">Domes</option>
+            <option value="Boats">Boats</option>
+            <option value="Beach">Beach</option>
+          </select>
+        </div>
+
+        <div class="mb-3 col-12 col-sm-6">
+          <label for="propertyType" class="form-label">Property Type</label>
+          <select name="listing[propertyType]" id="propertyType" class="form-select" required>
+            <option value="Villa">Villa</option>
+            <option value="House">House</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Cabin">Cabin</option>
+            <option value="Cottage">Cottage</option>
+            <option value="Hotel">Hotel</option>
+            <option value="Guesthouse">Guesthouse</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-6 col-sm-3">
+          <label for="maxGuests" class="form-label">Guests</label>
+          <input name="listing[maxGuests]" id="maxGuests" type="number" min="1" value="4" class="form-control" required />
+        </div>
+        <div class="mb-3 col-6 col-sm-3">
+          <label for="bedrooms" class="form-label">Bedrooms</label>
+          <input name="listing[bedrooms]" id="bedrooms" type="number" min="0" value="2" class="form-control" required />
+        </div>
+        <div class="mb-3 col-6 col-sm-3">
+          <label for="beds" class="form-label">Beds</label>
+          <input name="listing[beds]" id="beds" type="number" min="0" value="2" class="form-control" required />
+        </div>
+        <div class="mb-3 col-6 col-sm-3">
+          <label for="bathrooms" class="form-label">Baths</label>
+          <input name="listing[bathrooms]" id="bathrooms" type="number" min="0" value="1" class="form-control" required />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label d-block">Amenities</label>
+        <div class="row g-2">
+          <% 
+            const allAmenities = [
+              { name: "WiFi", icon: "fa-wifi" },
+              { name: "Kitchen", icon: "fa-kitchen-set" },
+              { name: "Air Conditioning", icon: "fa-snowflake" },
+              { name: "Free Parking", icon: "fa-square-parking" },
+              { name: "Pool", icon: "fa-person-swimming" },
+              { name: "Workspace", icon: "fa-laptop" },
+              { name: "TV", icon: "fa-tv" },
+              { name: "Washing Machine", icon: "fa-shirt" },
+              { name: "Heating", icon: "fa-temperature-arrow-up" },
+              { name: "Balcony", icon: "fa-mountain-sun" }
+            ];
+          %>
+          <% for(let amenity of allAmenities) { %>
+            <div class="col-6 col-sm-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="<%= amenity.name %>" id="amenity_<%= amenity.name %>" checked>
+                <label class="form-check-label" for="amenity_<%= amenity.name %>">
+                  <i class="fa-solid <%= amenity.icon %> me-1 text-secondary"></i> <%= amenity.name %>
+                </label>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-12 col-sm-4">
+          <label for="price" class="form-label">Price (&#8377;)</label>
           <input
             name="listing[price]"
+            id="price"
             placeholder="1200"
+            type="number"
             class="form-control"
             required
           />
           <div class="invalid-feedback">Price should be valid</div>
         </div>
 
-        <div class="mb-3 col-md-8">
-          <label for="country" class="form-lable">Country</label>
+        <div class="mb-3 col-12 col-sm-8">
+          <label for="country" class="form-label">Country</label>
           <input
             name="listing[country]"
+            id="country"
             placeholder="India"
             type="text"
             class="form-control"
@@ -68,10 +160,11 @@
       </div>
 
       <div class="mb-3">
-        <label for="location" class="form-lable">Location</label>
+        <label for="location" class="form-label">Location</label>
         <input
           name="listing[location]"
-          placeholder="Jaipur,Rajasthan"
+          id="location"
+          placeholder="Jaipur, Rajasthan"
           type="text"
           class="form-control"
           required
@@ -79,7 +172,9 @@
         <div class="invalid-feedback">Location should be valid</div>
       </div>
 
-      <button class="btn btn-dark add-btn mt-3">Add</button>
+      <button class="btn add-btn w-100 mt-3 py-2 fs-6">Add Listing</button>
     </form>
   </div>
 </div>
+
+

@@ -7,7 +7,15 @@ module.exports.listingSchema = Joi.object({
     location: Joi.string().required(),
     country: Joi.string().required(),
     price: Joi.number().required().min(0),
+    category: Joi.string().allow("", null),
+    propertyType: Joi.string().allow("", null),
+    maxGuests: Joi.number().min(1).allow("", null),
+    bedrooms: Joi.number().min(0).allow("", null),
+    beds: Joi.number().min(0).allow("", null),
+    bathrooms: Joi.number().min(0).allow("", null),
+    amenities: Joi.array().items(Joi.string()).allow(null),
     image: Joi.string().allow("", null),
+    images: Joi.array().allow(null),
   }).required(),
 });
 
@@ -18,3 +26,5 @@ module.exports.reviewSchema = Joi.object({
     comment: Joi.string().required(),
   }).required()
 })
+
+

@@ -1,0 +1,110 @@
+<% layout("/layouts/boilerplate") %>
+
+<%
+  let coverImage = "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80";
+  if (booking.listing && booking.listing.images && booking.listing.images.length > 0) {
+    coverImage = booking.listing.images[0].url;
+  } else if (booking.listing && booking.listing.image && booking.listing.image.url) {
+    coverImage = booking.listing.image.url;
+  }
+%>
+
+<div class="container py-4 py-md-5">
+  <div class="mx-auto" style="max-width: 650px;">
+    <!-- Back to Trips Header Link -->
+    <div class="mb-3">
+      <a href="/bookings" class="text-secondary text-decoration-none small fw-semibold">
+        <i class="fa-solid fa-chevron-left me-1"></i> Back to My Trips
+      </a>
+    </div>
+
+    <!-- Booking Details Summary Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+      <!-- Status Banner -->
+      <div class="p-3 px-4 d-flex align-items-center justify-content-between <%= booking.status === 'confirmed' ? 'bg-success text-white' : 'bg-secondary text-white' %>">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa-solid <%= booking.status === 'confirmed' ? 'fa-circle-check' : 'fa-circle-xmark' %> fs-5"></i>
+          <span class="fw-bold fs-6 text-capitalize">Reservation <%= booking.status %></span>
+        </div>
+        <small class="opacity-75">Ref ID: #<%= booking._id.toString().substring(18) %></small>
+      </div>
+
+      <div class="card-body p-4">
+        <!-- Listing Thumbnail & Header -->
+        <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
+          <img src="<%= coverImage %>" class="rounded-3 object-fit-cover shadow-sm" style="width: 90px; height: 75px;" alt="<%= booking.listing ? booking.listing.title : 'Listing' %>">
+          <div>
+            <% if (booking.listing) { %>
+              <h5 class="fw-bold text-dark mb-1">
+                <a href="/listings/<%= booking.listing._id %>" class="text-dark text-decoration-none"><%= booking.listing.title %></a>
+              </h5>
+              <p class="text-muted small mb-1">
+                <i class="fa-solid fa-location-dot text-danger me-1"></i><%= booking.listing.location %>, <%= booking.listing.country %>
+              </p>
+              <small class="text-secondary">
+                Hosted by <strong><%= booking.listing.owner ? booking.listing.owner.username : 'Host' %></strong>
+              </small>
+            <% } else { %>
+              <h5 class="fw-bold text-dark mb-0">Listing Details Unavailable</h5>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Reservation Specifications Grid -->
+        <h6 class="fw-bold text-dark mb-3">Reservation Details</h6>
+        <div class="row row-cols-2 g-3 p-3 bg-light rounded-4 mb-4 border">
+          <div class="col">
+            <span class="text-muted small d-block mb-1">Check-in</span>
+            <span class="fw-semibold text-dark fs-6"><%= new Date(booking.checkIn).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          </div>
+          <div class="col">
+            <span class="text-muted small d-block mb-1">Checkout</span>
+            <span class="fw-semibold text-dark fs-6"><%= new Date(booking.checkOut).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          </div>
+          <div class="col">
+            <span class="text-muted small d-block mb-1">Guests</span>
+            <span class="fw-semibold text-dark"><%= booking.guests %> <%= booking.guests === 1 ? 'guest' : 'guests' %></span>
+          </div>
+          <div class="col">
+            <span class="text-muted small d-block mb-1">Duration</span>
+            <span class="fw-semibold text-dark"><%= booking.nights %> <%= booking.nights === 1 ? 'night' : 'nights' %></span>
+          </div>
+        </div>
+
+        <!-- Price Breakdown -->
+        <h6 class="fw-bold text-dark mb-3">Price Breakdown</h6>
+        <div class="border rounded-4 p-3 mb-4">
+          <div class="d-flex justify-content-between mb-2 text-secondary small">
+            <span>&#8377;<%= booking.pricePerNight ? booking.pricePerNight.toLocaleString('en-IN') : '0' %> × <%= booking.nights %> <%= booking.nights === 1 ? 'night' : 'nights' %></span>
+            <span>&#8377;<%= booking.subtotal ? booking.subtotal.toLocaleString('en-IN') : '0' %></span>
+          </div>
+          <div class="d-flex justify-content-between mb-2 text-secondary small">
+            <span>Service fee (10%)</span>
+            <span>&#8377;<%= booking.serviceFee ? booking.serviceFee.toLocaleString('en-IN') : '0' %></span>
+          </div>
+          <div class="d-flex justify-content-between pt-2 border-top fw-bold text-dark fs-6">
+            <span>Total Price</span>
+            <span class="text-danger">&#8377;<%= booking.totalPrice ? booking.totalPrice.toLocaleString('en-IN') : '0' %></span>
+          </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="d-flex align-items-center justify-content-between pt-2">
+          <% if (booking.listing) { %>
+            <a href="/listings/<%= booking.listing._id %>" class="btn btn-outline-dark rounded-3 px-3 py-1.5 fw-semibold small">
+              View Property
+            </a>
+          <% } %>
+
+          <% if (booking.status === 'confirmed') { %>
+            <form action="/bookings/<%= booking._id %>/cancel" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+              <button class="btn btn-danger rounded-3 px-4 py-1.5 fw-semibold small shadow-sm">
+                Cancel Reservation
+              </button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

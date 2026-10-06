@@ -1,0 +1,62 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="mt-4 mb-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Your Wishlist</h2>
+      <p class="text-secondary mb-0">Listings you've saved for future trips</p>
+    </div>
+    <a href="/listings" class="btn btn-outline-dark rounded-pill px-4">
+      <i class="fa-solid fa-compass me-1"></i>Explore More
+    </a>
+  </div>
+
+  <div id="wishlistGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 mt-1">
+    <% for(let listing of listings) { %>
+      <% if(listing) { %>
+        <div class="col">
+          <a href="/listings/<%= listing._id %>" class="listing-link">
+            <div class="card listing-card h-100">
+              <div class="card-img-wrapper">
+                <img 
+                  src="<%= (listing.images && listing.images.length > 0) ? listing.images[0].url : (listing.image ? listing.image.url : '') %>" 
+                  class="card-img-top" 
+                  alt="<%= listing.title %>"
+                >
+                <% if(listing.category) { %>
+                  <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75"><%= listing.category %></span>
+                <% } %>
+                <button 
+                  class="fav-btn btn position-absolute top-0 end-0 m-2 p-1 border-0 shadow-none" 
+                  title="Remove from wishlist" 
+                  aria-label="Remove from wishlist" 
+                  onclick="toggleWishlist(event, '<%= listing._id %>')"
+                >
+                  <i class="fa-solid fa-heart text-danger fs-5"></i>
+                </button>
+              </div>
+
+              <div class="card-body">
+                <h5 class="card-title-text"><%= listing.title %></h5>
+                <p class="card-price-text mb-0">
+                  <b>&#8377;<%= listing.price ? listing.price.toLocaleString("en-IN") : "0" %></b> / night
+                </p>
+                <small class="text-muted"><%= listing.location %>, <%= listing.country %></small>
+              </div>
+            </div>
+          </a>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+
+  <!-- Empty Wishlist State -->
+  <div id="wishlistEmptyState" class="text-center py-5 my-5 bg-light rounded-4 border <%= (listings && listings.length > 0) ? 'd-none' : '' %>">
+    <i class="fa-regular fa-heart text-muted display-1 mb-3"></i>
+    <h3 class="fw-bold">Your wishlist is empty</h3>
+    <p class="text-secondary mb-4">
+      As you search WanderLust, click the heart icon on any stay to save your favorite places here.
+    </p>
+    <a href="/listings" class="btn btn-dark px-4 py-2 rounded-pill">Explore Listings</a>
+  </div>
+</div>
